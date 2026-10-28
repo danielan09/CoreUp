@@ -10,14 +10,14 @@ public class ConexaoFactory {
     private static final String URL = "jdbc:sqlite:academia.db";
 
     public static Connection getConexao() throws SQLException {
-        Connection coon = DriverManager.getConnection(URL);
-        try (Statement st = coon.createStatement()) {
-          st.execute("PRAGMA foreing_keys = ON ");
+        Connection conexao = DriverManager.getConnection(URL);
+        try (Statement st = conexao.createStatement()) {
+          st.execute("PRAGMA foreign_keys = ON ");
         }
-        return coon;
+        return conexao;
     }
 
-public static void criarTabelad() {
+public static void criarTabelas() {
         String sqlUsuario = """
                 CREATE TABLE IF NOT EXIST usuario (
                  id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,7 +38,7 @@ public static void criarTabelad() {
                  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
                 )""";
 
-        try (Connection conn = getConexao(); Statement st = conn.createStatement()) {
+        try (Connection conexao = getConexao(); Statement st = conexao.createStatement()) {
             st.execute(sqlUsuario);
             st.execute(sqlExercicio);
         } catch (SQLException e) {
