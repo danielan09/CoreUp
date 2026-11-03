@@ -31,3 +31,4 @@ public class ResumoDiario {
                 + " | Jantar: " + jantar;
     }
 }
+//resumo diário
