@@ -6,21 +6,25 @@ public abstract class Exercicio {
     private final String nome;
     private final String grupoMuscular;
 
-    public Exercicio(String nome, String grupoMuscular) {
-        this.nome = Objects.requireNonNull(nome, "nome não pode ser nulo");
-        this.grupoMuscular = Objects.requireNonNull(grupoMuscular, "grupo muscular não pode ser nulo");
-        if (nome.isBlank() || grupoMuscular.isBlank()) {
+    protected Exercicio(String var1, String var2) {
+        this.nome = (String)Objects.requireNonNull(var1, "nome não pode ser nulo");
+        this.grupoMuscular = (String)Objects.requireNonNull(var2, "grupo muscular não pode ser nulo");
+        if (var1.isBlank() || var2.isBlank()) {
             throw new IllegalArgumentException("Nome e grupo muscular não podem estar vazios.");
         }
     }
 
-    public String getNome() { return nome; }
-    public String getGrupoMuscular() { return grupoMuscular; }
+    public String getNome() {
+        return this.nome;
+    }
+
+    public String getGrupoMuscular() {
+        return this.grupoMuscular;
+    }
 
     public abstract String getDescricao();
 
-    @Override
     public String toString() {
-        return getDescricao();
+        return this.getDescricao();
     }
 }

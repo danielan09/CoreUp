@@ -2,35 +2,43 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class Treino {
     private final String nome;
-    protected final List<Exercicio> exercicios = new ArrayList<>();
+    protected final List<Exercicio> exercicios = new ArrayList();
 
-    public Treino(String nome) {
-        this.nome = nome;
+    protected Treino(String var1) {
+        this.nome = (String)Objects.requireNonNull(var1, "nome não pode ser nulo");
+        if (var1.isBlank()) {
+            throw new IllegalArgumentException("O nome do treino não pode estar vazio.");
+        }
     }
 
-    public String getNome() { return nome; }
+    public String getNome() {
+        return this.nome;
+    }
 
     public List<Exercicio> getExercicios() {
-        return new ArrayList<>(exercicios); // Cópia: protege o encapsulamento
+        return new ArrayList(this.exercicios);
+    }
+
+    public void adicionarExercicio(Exercicio var1) {
+        this.exercicios.add((Exercicio)Objects.requireNonNull(var1, "exercicio não pode ser nulo"));
     }
 
     public abstract String getOrigem();
 
     public void exibir() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("=== ").append(nome).append(" [").append(getOrigem()).append("] ===");
-
-        if (exercicios.isEmpty()) {
-            sb.append("\n  (nenhum exercício)");
+        String var10001 = this.nome;
+        System.out.println("=== " + var10001 + " [" + this.getOrigem() + "] ===");
+        if (this.exercicios.isEmpty()) {
+            System.out.println("  (nenhum exercício)");
         } else {
-            for (int i = 0; i < exercicios.size(); i++) {
-                sb.append("\n  ").append(i + 1).append(". ").append(exercicios.get(i));
+            for(int var1 = 0; var1 < this.exercicios.size(); ++var1) {
+                System.out.println("  " + (var1 + 1) + ". " + ((Exercicio)this.exercicios.get(var1)).getDescricao());
             }
+
         }
-        System.out.println(sb.toString());
     }
 }
-
