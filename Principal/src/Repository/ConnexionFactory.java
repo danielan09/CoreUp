@@ -1,20 +1,20 @@
-package Repositorio;
+package Repository;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class ConexaoFactory {
+public class ConnexionFactory {
 
     private static final String URL = "jdbc:sqlite:academia.db";
 
-    public static Connection getConexao() throws SQLException {
-        Connection conexao = DriverManager.getConnection(URL);
-        try (Statement st = conexao.createStatement()) {
+    public static Connection getConnexion() throws SQLException {
+        Connection connexion = DriverManager.getConnection(URL);
+        try (Statement st = connexion.createStatement()) {
           st.execute("PRAGMA foreign_keys = ON ");
         }
-        return conexao;
+        return connexion;
     }
 
 public static void criarTabelas() {
@@ -38,7 +38,7 @@ public static void criarTabelas() {
                  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
                 )""";
 
-        try (Connection conexao = getConexao(); Statement st = conexao.createStatement()) {
+        try (Connection conexao = getConnexion(); Statement st = conexao.createStatement()) {
             st.execute(sqlUsuario);
             st.execute(sqlExercicio);
         } catch (SQLException e) {

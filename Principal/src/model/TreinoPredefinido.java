@@ -8,7 +8,7 @@ public class TreinoPredefinido extends Treino {
         this.adicionarExercicio(new ExercicioForca("Agachamento", "Pernas", 3, 12));
         this.adicionarExercicio(new ExercicioForca("Rosca direta", "Bíceps", 2, 10));
         this.adicionarExercicio(new ExercicioForca("Tríceps", "Tríceps", 2, 10));
-        this.adicionarExercicio(new ExercicioCardio("Caminhada", "Cardiovascular", 10));
+        this.adicionarExercicio(new ExercicioCardio("Caminhada",  25));
     }
 
     public String getOrigem() {

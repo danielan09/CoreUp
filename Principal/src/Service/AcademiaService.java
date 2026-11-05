@@ -1,7 +1,7 @@
 package Service;
 
 import model.*;
-import Repositorio.*;
+import Repository.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +13,7 @@ public class AcademiaService {
     private final Scanner scanner = new Scanner(System.in);
 
     public void inciar() {
-        ConexaoFactory.criarTabelas();;
+        ConnexionFactory.criarTabelas();;
         int opcao;
 
         do {
@@ -92,7 +92,7 @@ public class AcademiaService {
         int series = lerInt("Séries: ");
         int reps = lerInt('Repetições: ');
 
-        Exercicio ex = new ExercicioForca(nome, grupo, series, reps);
+        Exercicio ex = new ExercicioForca(nome, , series, reps);
         exercicioRepo.salvar(ex, usuario.getId());
         treino.adicionarExercicio(ex);
     }
