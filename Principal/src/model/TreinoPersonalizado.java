@@ -1,19 +1,24 @@
 package model;
 
 public class TreinoPersonalizado extends Treino {
+
     public TreinoPersonalizado() {
         super("Treino do Usuário");
     }
 
-    public boolean removerExercicio(int var1) {
-        if (var1 >= 0 && var1 < this.exercicios.size()) {
-            this.exercicios.remove(var1);
-            return true;
-        } else {
-            return false;
-        }
+    public void adicionarExercicio(Exercicio exercicio) {
+        exercicios.add(exercicio);
     }
 
+    public boolean removerExercicio(int indice) {
+        if (indice < 0 || indice >= exercicios.size()) {
+            return false;
+        }
+        exercicios.remove(indice);
+        return true;
+    }
+
+    @Override
     public String getOrigem() {
         return "Personalizado";
     }

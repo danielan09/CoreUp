@@ -19,14 +19,14 @@ public class ConnexionFactory {
 
 public static void criarTabelas() {
         String sqlUsuario = """
-                CREATE TABLE IF NOT EXIST usuario (
+                CREATE TABLE IF NOT EXISTS usuario (
                  id INTEGER PRIMARY KEY AUTOINCREMENT,
                  nome TEXT NOT NULL,
                  idade INTEGER NOT NULL
                 )""";
 
         String sqlExercicio = """
-                CREATE TABLE IF NOT EXIST exercicio (
+                CREATE TABLE IF NOT EXISTS exercicio (
                  id INTEGER PRIMARY KEY AUTOINCREMENT,
                  usuario_id INTEGER NOT NULL,
                  tipo TEXT NOT NULL,

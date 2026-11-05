@@ -1,47 +1,29 @@
 package model;
 
-import java.util.Objects;
-
 public class Usuario {
-    private static int proximoId = 1;
-    private final int id;
-    private final String nome;
-    private final int idade;
-    private TreinoCompleto treino;
+    private int id;
+    private String nome;
+    private int idade;
 
-    public Usuario(String var1, int var2) {
-        this.nome = (String)Objects.requireNonNull(var1, "nome não pode ser nulo");
-        if (var1.isBlank()) {
-            throw new IllegalArgumentException("O nome não pode estar vazio.");
-        } else if (var2 > 0 && var2 <= 120) {
-            this.id = proximoId++;
-            this.idade = var2;
-        } else {
-            throw new IllegalArgumentException("Idade inválida: " + var2);
+    public Usuario (int id, String nome, int idade) {
+        if (idade<= 0 || idade > 120) {
+            throw new IllegalArgumentException("Idade inválida: " + idade);
         }
+        this.id = id;
+        this.nome = nome;
+        this.idade = idade;
     }
 
-    public int getId() {
-        return this.id;
+    public Usuario(String nome, int i) {
     }
 
-    public String getNome() {
-        return this.nome;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    public String getNome() { return nome; }
+    public int getIdade() { return idade; }
 
-    public int getIdade() {
-        return this.idade;
-    }
-
-    public TreinoCompleto getTreino() {
-        return this.treino;
-    }
-
-    public void setTreino(TreinoCompleto var1) {
-        this.treino = (TreinoCompleto)Objects.requireNonNull(var1, "treino não pode ser nulo");
-    }
-
+    @Override
     public String toString() {
-        return "Usuário " + this.id + " - " + this.nome + ", " + this.idade + " anos";
+        return "Usuário #" +id+ "-" +nome+ "," +idade+ "anos";
     }
 }

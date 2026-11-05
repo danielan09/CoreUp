@@ -8,68 +8,89 @@ import java.util.Optional;
 import java.util.Scanner;
 
 public class AcademiaService {
-    private final Repositorio<Usuario>usuarioRepo = new UsuariojdbcRepositorio();
-    private final ExerciciojdbcRepositorio exerciciojdbcRepo = new exercicioRepositorio();
+    private final Repositorio<Usuario> usuarioRepo = new UsuarioJdbcRepositorio();
+    private final ExercicioJdbcRepositorio exercicioRepo = new ExercicioJdbcRepositorio();
     private final Scanner scanner = new Scanner(System.in);
 
-    public void inciar() {
-        ConnexionFactory.criarTabelas();;
+    public void iniciar() {
+        ConnexionFactory.criarTabelas();
         int opcao;
 
         do {
-            System.out.println("─── SERVIÇOS DA ACADEMIA ───");
-            System.out.println("1 - Cadastrar novousuário e montar treino");
-            System.out.println("2 - Ver Usuários salvos e trinos");
+            System.out.println("\n===== ACADEMIA =====");
+            System.out.println("1 - Cadastrar novo usuário e montar treino");
+            System.out.println("2 - Ver usuários salvos e seus treinos");
             System.out.println("0 - Sair");
+            opcao = lerInt("Opção: ");
 
             switch (opcao) {
                 case 1 -> novoUsuario();
-                case 2 -> verUsuario();
-                case 0 -> System.out.println("Encerrando...");
-                default -> System.out.println("Opção inválida");
+                case 2 -> verUsuarios();
+                case 0 -> System.out.println("Até mais!");
+                default -> System.out.println("Opção inválida.");
             }
-        } while(opcao!=0);
+        } while (opcao != 0);
     }
 
     private void novoUsuario() {
         Usuario usuario = cadastrarUsuario();
-        usuarioRepo.salvar(usuario);
-        System.out.println("Salvo no banco com o id" + usuario.getId());
+        usuarioRepo.salvar(usuario); // INSERT no banco; o id é preenchido aqui
+        System.out.println("Salvo no banco com o id " + usuario.getId());
 
         TreinoPersonalizado personalizado = new TreinoPersonalizado();
         montarTreinoPersonalizado(usuario, personalizado);
         mostrarTreinoCompleto(usuario, personalizado);
     }
 
-    private void verUsuario() {
-        List<Usuario> usuario = usuarioRepo.listarTodos();
-        if(usuario.isEmpty()) {
+    private void verUsuarios() {
+        List<Usuario> usuarios = usuarioRepo.listarTodos(); // SELECT * FROM usuario
+        if (usuarios.isEmpty()) {
             System.out.println("Nenhum usuário cadastrado.");
             return;
         }
         usuarios.forEach(System.out::println);
 
         int id = lerInt("Id do usuário para ver o treino (0 volta): ");
-        if(id == 0 return);
+        if (id == 0) return;
 
         Optional<Usuario> usuario = usuarioRepo.buscarPorId(id);
-        if(Usuario.isEmpty()) {
+        if (usuario.isEmpty()) {
             System.out.println("Usuário não encontrado.");
             return;
         }
 
+        // Reconstrói a parte do usuário a partir do banco
         TreinoPersonalizado personalizado = new TreinoPersonalizado();
-        exercicioRepo.listarPorUsuario(id).forEarch(personalizado::adicionarExercicio);
+        exercicioRepo.listarPorUsuario(id).forEach(personalizado::adicionarExercicio);
         mostrarTreinoCompleto(usuario.get(), personalizado);
     }
 
     private void mostrarTreinoCompleto(Usuario usuario, TreinoPersonalizado personalizado) {
+        // A parte do app NÃO vai para o banco: é calculada pela idade
+        TreinoPredefinido parteApp = new TreinoPredefinido(usuario.getIdade());
+        new TreinoCompleto(parteApp, personalizado).exibir();
+    }
+
+    private Usuario cadastrarUsuario() {
+        System.out.print("Seu nome: ");
+        String nome = scanner.nextLine();
+
+        while (true) {
+            try {
+                return new Usuario(nome, lerInt("Sua idade: "));
+            } catch (IllegalArgumentException e) {
+                System.out.println("Digite uma idade válida (1 a 120).");
+            }
+        }
+    }
+
+    private void montarTreinoPersonalizado(Usuario usuario, TreinoPersonalizado treino) {
         int opcao;
         do {
-            System.out.println("─── MONTE SEU TREINO ───");
-            System.out.println("1 - Adicionar exercicio de força");
-            System.out.println("2 - Adicionar exercicio de cardio");
-            System.out.println("3 - Remover exercicio");
+            System.out.println("\n--- Monte seu treino ---");
+            System.out.println("1 - Adicionar exercício de força");
+            System.out.println("2 - Adicionar exercício de cardio");
+            System.out.println("3 - Remover exercício");
             System.out.println("4 - Ver meu treino");
             System.out.println("0 - Finalizar");
             opcao = lerInt("Opção: ");
@@ -82,31 +103,42 @@ public class AcademiaService {
                 case 0 -> System.out.println("Treino finalizado!");
                 default -> System.out.println("Opção inválida.");
             }
-        } while (opcao !=0);
+        } while (opcao != 0);
     }
 
     private void adicionarForca(Usuario usuario, TreinoPersonalizado treino) {
-        System.out.println('Nome do exercicio: ');
+        System.out.print("Nome do exercício: ");
         String nome = scanner.nextLine();
-        System.out.println("Grupo muscular: ");
+        System.out.print("Grupo muscular: ");
+        String grupo = scanner.nextLine();
         int series = lerInt("Séries: ");
-        int reps = lerInt('Repetições: ');
+        int reps = lerInt("Repetições: ");
 
-        Exercicio ex = new ExercicioForca(nome, , series, reps);
+        Exercicio ex = new ExercicioForca(nome, grupo, series, reps);
+        exercicioRepo.salvar(ex, usuario.getId()); // grava no banco
+        treino.adicionarExercicio(ex);             // e na lista em memória
+    }
+
+    private void adicionarCardio(Usuario usuario, TreinoPersonalizado treino) {
+        System.out.print("Nome do exercício: ");
+        String nome = scanner.nextLine();
+        int minutos = lerInt("Duração (min): ");
+
+        Exercicio ex = new ExercicioCardio(nome, minutos);
         exercicioRepo.salvar(ex, usuario.getId());
         treino.adicionarExercicio(ex);
     }
 
     private void removerExercicio(TreinoPersonalizado treino) {
         treino.exibir();
-        int.adicionarExercicio(ex);
+        int indice = lerInt("Número do exercício a remover: ") - 1;
 
         List<Exercicio> exercicios = treino.getExercicios();
-        if(indice <0 || indice >= exercicios.size()) {
-            System.out.println('Número inválido.');
+        if (indice < 0 || indice >= exercicios.size()) {
+            System.out.println("Número inválido.");
             return;
         }
-        exerciciosRepo.remover(exercicios.get(indice).gerId());
+        exercicioRepo.remover(exercicios.get(indice).getId());
         treino.removerExercicio(indice);
     }
 

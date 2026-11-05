@@ -1,6 +1,4 @@
 package Repository;
-
-import Repository.Repositorio;
 import model.Usuario;
 
 import java.sql.*;
@@ -14,14 +12,13 @@ public class UsuarioJdbcRepositorio implements Repositorio<Usuario> {
     public void salvar(Usuario usuario) {
         String sql = "INSERT INTO usuario (nome, idade) VALUES (?, ?)";
 
-        try (Connection conn = ConnexionFactory.getConexao();
+        try (Connection conn = ConnexionFactory.getConnexion();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setString(1, usuario.getNome()); // 1º ? = nome
-            ps.setInt(2, usuario.getIdade());   // 2º ? = idade
-            ps.executeUpdate();                 // roda o INSERT
+            ps.setString(1, usuario.getNome());
+            ps.setInt(2, usuario.getIdade());
+            ps.executeUpdate();
 
-            // Pergunta ao banco qual id ele gerou e guarda no objeto
             try (ResultSet chaves = ps.getGeneratedKeys()) {
                 if (chaves.next()) {
                     usuario.setId(chaves.getInt(1));
@@ -36,7 +33,7 @@ public class UsuarioJdbcRepositorio implements Repositorio<Usuario> {
     public Optional<Usuario> buscarPorId(int id) {
         String sql = "SELECT * FROM usuario WHERE id = ?";
 
-        try (Connection conn = ConexaoFactory.getConexao();
+        try (Connection conn = ConnexionFactory.getConnexion();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
@@ -57,11 +54,11 @@ public class UsuarioJdbcRepositorio implements Repositorio<Usuario> {
         List<Usuario> lista = new ArrayList<>();
         String sql = "SELECT * FROM usuario";
 
-        try (Connection conn = ConnexionFactory.getConexao();
+        try (Connection conn = ConnexionFactory.getConnexion();
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
 
-            while (rs.next()) { // percorre linha por linha
+            while (rs.next()) {
                 lista.add(new Usuario(rs.getInt("id"), rs.getString("nome"), rs.getInt("idade")));
             }
         } catch (SQLException e) {
