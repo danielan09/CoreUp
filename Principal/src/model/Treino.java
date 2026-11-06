@@ -14,7 +14,7 @@ public abstract class Treino {
     public String getNome() { return nome; }
 
     public List<Exercicio> getExercicios() {
-        return new ArrayList<>(exercicios); // cópia: protege o encapsulamento
+        return new ArrayList<>(exercicios);
     }
 
     public abstract String getOrigem();

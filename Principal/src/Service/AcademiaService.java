@@ -34,7 +34,7 @@ public class AcademiaService {
 
     private void novoUsuario() {
         Usuario usuario = cadastrarUsuario();
-        usuarioRepo.salvar(usuario); // INSERT no banco; o id é preenchido aqui
+        usuarioRepo.salvar(usuario);
         System.out.println("Salvo no banco com o id " + usuario.getId());
 
         TreinoPersonalizado personalizado = new TreinoPersonalizado();
@@ -43,7 +43,7 @@ public class AcademiaService {
     }
 
     private void verUsuarios() {
-        List<Usuario> usuarios = usuarioRepo.listarTodos(); // SELECT * FROM usuario
+        List<Usuario> usuarios = usuarioRepo.listarTodos();
         if (usuarios.isEmpty()) {
             System.out.println("Nenhum usuário cadastrado.");
             return;
@@ -59,14 +59,13 @@ public class AcademiaService {
             return;
         }
 
-        // Reconstrói a parte do usuário a partir do banco
         TreinoPersonalizado personalizado = new TreinoPersonalizado();
         exercicioRepo.listarPorUsuario(id).forEach(personalizado::adicionarExercicio);
         mostrarTreinoCompleto(usuario.get(), personalizado);
     }
 
     private void mostrarTreinoCompleto(Usuario usuario, TreinoPersonalizado personalizado) {
-        // A parte do app NÃO vai para o banco: é calculada pela idade
+
         TreinoPredefinido parteApp = new TreinoPredefinido(usuario.getIdade());
         new TreinoCompleto(parteApp, personalizado).exibir();
     }
@@ -115,8 +114,8 @@ public class AcademiaService {
         int reps = lerInt("Repetições: ");
 
         Exercicio ex = new ExercicioForca(nome, grupo, series, reps);
-        exercicioRepo.salvar(ex, usuario.getId()); // grava no banco
-        treino.adicionarExercicio(ex);             // e na lista em memória
+        exercicioRepo.salvar(ex, usuario.getId());
+        treino.adicionarExercicio(ex);
     }
 
     private void adicionarCardio(Usuario usuario, TreinoPersonalizado treino) {

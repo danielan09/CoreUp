@@ -7,9 +7,14 @@ import java.sql.Statement;
 
 public class ConnexionFactory {
 
-    private static final String URL = "jdbc:sqlite:academia.db";
+    private static final  String URL = "jdbc:sqlite:academia5.db";
 
     public static Connection getConnexion() throws SQLException {
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("Drive do SQLite não encontrado", e);
+        }
         Connection connexion = DriverManager.getConnection(URL);
         try (Statement st = connexion.createStatement()) {
           st.execute("PRAGMA foreign_keys = ON ");
@@ -42,7 +47,7 @@ public static void criarTabelas() {
             st.execute(sqlUsuario);
             st.execute(sqlExercicio);
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao criar tabelas", e);
+            e.printStackTrace();
         }
 }
 }

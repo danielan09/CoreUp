@@ -2,7 +2,6 @@ package model;
 
 public class TreinoPredefinido extends Treino {
 
-    // O construtor monta o treino de acordo com a faixa etária
     public TreinoPredefinido(int idade) {
         super("Treino Base do App");
         montarPorIdade(idade);

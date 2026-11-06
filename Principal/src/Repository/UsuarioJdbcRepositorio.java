@@ -25,6 +25,7 @@ public class UsuarioJdbcRepositorio implements Repositorio<Usuario> {
                 }
             }
         } catch (SQLException e) {
+            System.out.println(e.getMessage());
             throw new RuntimeException("Erro ao salvar usuário", e);
         }
     }
@@ -40,7 +41,7 @@ public class UsuarioJdbcRepositorio implements Repositorio<Usuario> {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return Optional.of(
-                            new Usuario(rs.getInt("id"), rs.getString("nome"), rs.getInt("idade")));
+                            new Usuario(rs.getString("nome"), rs.getInt("idade")));
                 }
             }
             return Optional.empty();
@@ -59,7 +60,7 @@ public class UsuarioJdbcRepositorio implements Repositorio<Usuario> {
              ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
-                lista.add(new Usuario(rs.getInt("id"), rs.getString("nome"), rs.getInt("idade")));
+                lista.add(new Usuario(rs.getString("nome"), rs.getInt("idade")));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao listar usuários", e);

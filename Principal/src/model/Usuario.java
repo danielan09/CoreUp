@@ -5,16 +5,13 @@ public class Usuario {
     private String nome;
     private int idade;
 
-    public Usuario (int id, String nome, int idade) {
+    public Usuario (String nome, int idade) {
         if (idade<= 0 || idade > 120) {
             throw new IllegalArgumentException("Idade inválida: " + idade);
         }
         this.id = id;
         this.nome = nome;
         this.idade = idade;
-    }
-
-    public Usuario(String nome, int i) {
     }
 
     public int getId() { return id; }
