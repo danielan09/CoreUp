@@ -1,4 +1,4 @@
-package repository;
+package Repository;
 
 import model.Usuario;
 
@@ -7,8 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UsuarioJdbcRepositorio {
+public class UsuarioJdbcRepositorio implements Repositorio<Usuario> {
 
+    @Override
     public void salvar(Usuario usuario) {
         String sql = "INSERT INTO usuario (nome, idade, peso, altura, objetivo) VALUES (?, ?, ?, ?, ?)";
 
@@ -33,6 +34,7 @@ public class UsuarioJdbcRepositorio {
         }
     }
 
+    @Override
     public Optional<Usuario> buscarPorId(int id) {
         String sql = "SELECT * FROM usuario WHERE id = ?";
 
@@ -59,6 +61,7 @@ public class UsuarioJdbcRepositorio {
         }
     }
 
+    @Override
     public List<Usuario> listarTodos() {
         List<Usuario> lista = new ArrayList<>();
         String sql = "SELECT * FROM usuario";

@@ -76,9 +76,40 @@ public class AcademiaService {
 
         while (true) {
             try {
-                return new Usuario(nome, lerInt("Sua idade: "));
+                int idade = lerInt("Sua idade: ");
+                double peso = lerDoublePositivo("Seu peso (kg): ");
+                double altura = lerDoublePositivo("Sua altura (cm): ");
+                String objetivo = lerObjetivo();
+                return new Usuario(0, nome, idade, peso, altura, objetivo);
             } catch (IllegalArgumentException e) {
-                System.out.println("Digite uma idade válida (1 a 120).");
+                System.out.println("Dados inválidos. Confira a idade (1 a 120), peso e altura.");
+            }
+        }
+    }
+
+    private double lerDoublePositivo(String mensagem) {
+        while (true) {
+            try {
+                System.out.print(mensagem);
+                double valor = Double.parseDouble(scanner.nextLine().replace(',', '.'));
+                if (Double.isFinite(valor) && valor > 0) {
+                    return valor;
+                }
+                System.out.println("Digite um valor maior que zero.");
+            } catch (NumberFormatException e) {
+                System.out.println("Digite um número válido.");
+            }
+        }
+    }
+
+    private String lerObjetivo() {
+        while (true) {
+            System.out.println("Objetivo: 1 - Emagrecer | 2 - Ganhar massa | 3 - Saúde geral");
+            switch (lerInt("Opção: ")) {
+                case 1 -> { return "EMAGRECER"; }
+                case 2 -> { return "GANHAR_MASSA"; }
+                case 3 -> { return "SAUDE_GERAL"; }
+                default -> System.out.println("Opção inválida.");
             }
         }
     }

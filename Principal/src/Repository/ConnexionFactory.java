@@ -2,6 +2,7 @@ package Repository;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -27,7 +28,10 @@ public static void criarTabelas() {
                 CREATE TABLE IF NOT EXISTS usuario (
                  id INTEGER PRIMARY KEY AUTOINCREMENT,
                  nome TEXT NOT NULL,
-                 idade INTEGER NOT NULL
+                 idade INTEGER NOT NULL,
+                 peso REAL NOT NULL DEFAULT 70.0,
+                 altura REAL NOT NULL DEFAULT 170.0,
+                 objetivo TEXT NOT NULL DEFAULT 'SAUDE_GERAL'
                 )""";
 
         String sqlExercicio = """
@@ -46,8 +50,22 @@ public static void criarTabelas() {
         try (Connection conexao = getConnexion(); Statement st = conexao.createStatement()) {
             st.execute(sqlUsuario);
             st.execute(sqlExercicio);
+            adicionarColunaSeAusente(st, "peso", "REAL NOT NULL DEFAULT 70.0");
+            adicionarColunaSeAusente(st, "altura", "REAL NOT NULL DEFAULT 170.0");
+            adicionarColunaSeAusente(st, "objetivo", "TEXT NOT NULL DEFAULT 'SAUDE_GERAL'");
         } catch (SQLException e) {
             e.printStackTrace();
         }
 }
+
+    private static void adicionarColunaSeAusente(Statement st, String coluna, String definicao) throws SQLException {
+        try (ResultSet colunas = st.executeQuery("PRAGMA table_info(usuario)")) {
+            while (colunas.next()) {
+                if (coluna.equalsIgnoreCase(colunas.getString("name"))) {
+                    return;
+                }
+            }
+        }
+        st.execute("ALTER TABLE usuario ADD COLUMN " + coluna + " " + definicao);
+    }
 }
