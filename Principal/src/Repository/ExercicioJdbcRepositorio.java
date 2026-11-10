@@ -20,20 +20,23 @@ public class ExercicioJdbcRepositorio {
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setInt(1, usuarioId);
-            ps.setString(3, exercicio.getNome());
-            ps.setString(4, exercicio.getGrupoMuscular());
 
-            // Herança: descobrimos qual subclasse é para preencher as colunas certas
             if (exercicio instanceof ExercicioForca forca) {
                 ps.setString(2, "FORCA");
+                ps.setString(3, exercicio.getNome());
+                ps.setString(4, exercicio.getGrupoMuscular());
                 ps.setInt(5, forca.getSeries());
                 ps.setInt(6, forca.getRepeticoes());
                 ps.setNull(7, Types.INTEGER);
             } else if (exercicio instanceof ExercicioCardio cardio) {
                 ps.setString(2, "CARDIO");
+                ps.setString(3, exercicio.getNome());
+                ps.setString(4, exercicio.getGrupoMuscular());
                 ps.setNull(5, Types.INTEGER);
                 ps.setNull(6, Types.INTEGER);
                 ps.setInt(7, cardio.getDuracaoMinutos());
+            } else {
+                throw new IllegalArgumentException("Tipo de exercício não suportado.");
             }
 
             ps.executeUpdate();
@@ -59,8 +62,8 @@ public class ExercicioJdbcRepositorio {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Exercicio ex;
-                    // Lemos o "tipo" e criamos o objeto da classe certa
-                    if (rs.getString("tipo").equals("FORCA")) {
+                    String tipo = rs.getString("tipo");
+                    if ("FORCA".equalsIgnoreCase(tipo)) {
                         ex = new ExercicioForca(rs.getString("nome"), rs.getString("grupo_muscular"),
                                 rs.getInt("series"), rs.getInt("repeticoes"));
                     } else {

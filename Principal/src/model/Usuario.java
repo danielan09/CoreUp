@@ -14,6 +14,10 @@ public class Usuario {
     private double altura;    // em cm
     private String objetivo;  // EMAGRECER, GANHAR_MASSA, SAUDE_GERAL
 
+    public Usuario(String nome, int idade) {
+        this(0, nome, idade, 1, 1, "SAUDE_GERAL");
+    }
+
     // Construtor atualizado mantendo a validação original e adicionando os novos campos
     public Usuario(int id, String nome, int idade, double peso, double altura, String objetivo) {
         if (idade <= 0 || idade > 120) {
