@@ -6,13 +6,14 @@ import Repository.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import java.sql.SQLException;
 
 public class AcademiaService {
     private final Repositorio<Usuario> usuarioRepo = new UsuarioJdbcRepositorio();
     private final ExercicioJdbcRepositorio exercicioRepo = new ExercicioJdbcRepositorio();
     private final Scanner scanner = new Scanner(System.in);
 
-    public void iniciar() {
+    public void iniciar() throws SQLException {
         ConnexionFactory.criarTabelas();
         int opcao;
 

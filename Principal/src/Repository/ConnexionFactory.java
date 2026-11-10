@@ -43,18 +43,9 @@ public static void criarTabelas() {
                  FOREIGN KEY (usuario_id) REFERENCES usuario(id)
                 )""";
 
-        String sqlModelo = """
-                CREATE TABLE IF NOT EXISTS exercicio_modelo (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                tipo TEXT NOT NULL,
-                grupo_muscular TEXT NOT NULL,
-                nome TEXT NOT NULL
-                )""";
-
         try (Connection conexao = getConnexion(); Statement st = conexao.createStatement()) {
             st.execute(sqlUsuario);
             st.execute(sqlExercicio);
-            st.execute(sqlModelo);
         } catch (SQLException e) {
             e.printStackTrace();
         }
