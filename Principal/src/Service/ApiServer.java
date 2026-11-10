@@ -32,10 +32,60 @@ public class ApiServer {
     private static final int PORT = 8080;
     private final UsuarioJdbcRepositorio usuarioRepo = new UsuarioJdbcRepositorio();
     private final ExercicioJdbcRepositorio exercicioRepo = new ExercicioJdbcRepositorio();
-    private final Path frontendRoot = Paths.get(System.getProperty("user.dir"), "frontend").toAbsolutePath().normalize();
+    private final Path frontendRoot = resolveFrontendRoot();
+
+    private static Path resolveFrontendRoot() {
+        Path frontend = findFrontendRoot(Paths.get(System.getProperty("user.dir")));
+        if (frontend != null) {
+            return frontend;
+        }
+
+        try {
+            Path classesLocation = Paths.get(ApiServer.class.getProtectionDomain()
+                    .getCodeSource().getLocation().toURI());
+            frontend = findFrontendRoot(classesLocation);
+            if (frontend != null) {
+                return frontend;
+            }
+        } catch (java.net.URISyntaxException e) {
+            throw new IllegalStateException("Não foi possível resolver o caminho das classes da API.", e);
+        }
+
+        throw new IllegalStateException("Não foi possível localizar frontend/index.html. "
+                + "Diretório de execução: " + System.getProperty("user.dir"));
+    }
+
+    private static Path findFrontendRoot(Path start) {
+        Path current = start.toAbsolutePath().normalize();
+        if (Files.isRegularFile(current)) {
+            current = current.getParent();
+        }
+        for (int i = 0; i < 12; i++) {
+            if (current == null) {
+                break;
+            }
+            Path candidate = current.resolve("frontend");
+            if (Files.isRegularFile(candidate.resolve("index.html"))) {
+                return candidate;
+            }
+            Path nestedProjectFrontend = current.resolve("CoreUp").resolve("frontend");
+            if (Files.isRegularFile(nestedProjectFrontend.resolve("index.html"))) {
+                return nestedProjectFrontend;
+            }
+            Path parent = current.getParent();
+            if (parent == null) {
+                break;
+            }
+            current = parent;
+        }
+        return null;
+    }
 
     public void iniciar() throws IOException, java.sql.SQLException {
         ConnexionFactory.criarTabelas();
+        System.out.println("Diretório de execução: " + System.getProperty("user.dir"));
+        System.out.println("Frontend resolvido em: " + frontendRoot.toAbsolutePath());
+        System.out.println("index.html existe: " + Files.isRegularFile(frontendRoot.resolve("index.html")));
         HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
         server.createContext("/api", new ApiHandler());
         server.createContext("/", new StaticFileHandler());
@@ -180,7 +230,7 @@ public class ApiServer {
         }
     }
 
-    private static class StaticFileHandler implements HttpHandler {
+    private class StaticFileHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             String path = exchange.getRequestURI().getPath();
@@ -188,8 +238,8 @@ public class ApiServer {
                 path = "/index.html";
             }
 
-            Path file = Paths.get(System.getProperty("user.dir"), "frontend").resolve(path.substring(1)).normalize();
-            if (!file.startsWith(Paths.get(System.getProperty("user.dir"), "frontend").toAbsolutePath().normalize())) {
+            Path file = frontendRoot.resolve(path.substring(1)).normalize();
+            if (!file.startsWith(frontendRoot)) {
                 sendText(exchange, 403, "Acesso negado.");
                 return;
             }
