@@ -71,17 +71,92 @@ public class AcademiaService {
         new TreinoCompleto(parteApp, personalizado).exibir();
     }
 
+    // =========================================================================
+    // // [CADASTRO BLINDADO] Método com loops e validações para testar erros
+    // =========================================================================
     private Usuario cadastrarUsuario() {
-        System.out.print("Seu nome: ");
-        String nome = scanner.nextLine();
+        int id = 0; 
 
+        // // Entrada e validação do Nome (barra vazios e números)
+        String nome = "";
+        while (true) {
+            System.out.print("Seu nome: ");
+            nome = scanner.nextLine();
+            if (nome != null && !nome.trim().isEmpty() && !nome.matches(".*\\d.*")) {
+                break;
+            }
+            System.out.println("Erro: O nome não pode estar vazio ou conter números.");
+        }
+
+        // // Entrada e validação da Idade (barra letras e valores fora do intervalo)
+        int idade = 0;
         while (true) {
             try {
-                return new Usuario(nome, lerInt("Sua idade: "));
-            } catch (IllegalArgumentException e) {
-                System.out.println("Digite uma idade válida (1 a 120).");
+                idade = lerInt("Sua idade: ");
+                if (idade > 0 && idade <= 120) {
+                    break;
+                }
+                System.out.println("Erro: Idade deve estar entre 1 e 120 anos.");
+            } catch (Exception e) {
+                System.out.println("Digite um número inteiro válido.");
             }
         }
+
+        // // Entrada e validação do Peso (barra letras e negativos)
+        double peso = 0;
+        while (true) {
+            try {
+                System.out.print("Seu peso em kg (ex: 70.5): ");
+                peso = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                if (peso > 0 && peso <= 500) {
+                    break;
+                }
+                System.out.println("Erro: Peso inválido. Deve ser maior que 0.");
+            } catch (NumberFormatException e) {
+                System.out.println("Erro: Digite um número válido para o peso (use ponto ou vírgula).");
+            }
+        }
+
+        // // Entrada e validação da Altura em cm (ex: 174)
+        double altura = 0;
+        while (true) {
+            try {
+                System.out.print("Sua altura em cm (ex: 174): ");
+                altura = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                if (altura > 50 && altura <= 300) {
+                    break;
+                }
+                System.out.println("Erro: Altura inválida. Insira em cm (ex: 174).");
+            } catch (NumberFormatException e) {
+                System.out.println("Erro: Digite um número válido para a altura.");
+            }
+        }
+
+        // // Entrada do Objetivo via Menu Numerado (1, 2 ou 3)
+        String objetivo = "";
+        while (true) {
+            System.out.println("\nSelecione o Objetivo:");
+            System.out.println("1 - EMAGRECER");
+            System.out.println("2 - GANHAR_MASSA");
+            System.out.println("3 - SAUDE_GERAL");
+            int opcaoObj = lerInt("Opção: ");
+
+            if (opcaoObj == 1) {
+                objetivo = "EMAGRECER";
+                break;
+            } else if (opcaoObj == 2) {
+                objetivo = "GANHAR_MASSA";
+                break;
+            } else if (opcaoObj == 3) {
+                objetivo = "SAUDE_GERAL";
+                break;
+            } else {
+                System.out.println("Erro: Opção inválida! Digite 1, 2 ou 3.");
+            }
+        }
+
+        // Retorna o objeto Usuario criado com todos os 6 parâmetros exigidos e validados
+        return new Usuario(id, nome, idade, peso, altura, objetivo);
     }
 
     private void montarTreinoPersonalizado(Usuario usuario, TreinoPersonalizado treino) {
