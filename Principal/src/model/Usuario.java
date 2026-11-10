@@ -9,12 +9,10 @@ public class Usuario {
     private String nome;
     private int idade;
 
-    // Novos campos do Módulo de Perfil e IMC
-    private double peso;      // em kg
-    private double altura;    // em cm
-    private String objetivo;  // EMAGRECER, GANHAR_MASSA, SAUDE_GERAL
+    private double peso;      
+    private double altura;    
+    private String objetivo;  
 
-    // Construtor atualizado mantendo a validação original e adicionando os novos campos
     public Usuario(int id, String nome, int idade, double peso, double altura, String objetivo) {
         if (idade <= 0 || idade > 120) {
             throw new IllegalArgumentException("Idade inválida: " + idade);
@@ -34,9 +32,7 @@ public class Usuario {
         this.objetivo = objetivo;
     }
 
-    // --- Métodos de Negócio (IMC) ---
 
-    // Cálculo do IMC usando BigDecimal e arredondamento HALF_UP (altura em cm)
     public BigDecimal calcularIMC() {
         BigDecimal pesoBd = BigDecimal.valueOf(this.peso);
         BigDecimal alturaBd = BigDecimal.valueOf(this.altura);
@@ -45,7 +41,7 @@ public class Usuario {
                 .divide(alturaBd.multiply(alturaBd), 1, RoundingMode.HALF_UP);
     }
 
-    // Classificação do IMC baseada na tabela da OMS
+   
     public String obterClassificacaoIMC() {
         BigDecimal imc = calcularIMC();
 
@@ -64,7 +60,7 @@ public class Usuario {
         }
     }
 
-    // --- Getters e Setters ---
+    
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
